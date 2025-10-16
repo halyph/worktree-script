@@ -48,6 +48,43 @@ source ~/.config/git-worktree-automation.sh
 source ~/.zshrc
 ```
 
+### Method 3: Symlink (Best for Development)
+
+This method is ideal if you want to keep the script in this repository and easily update it:
+
+1. Create a symlink to the script in a directory that's in your PATH or config directory:
+
+```bash
+# Option A: Link to a directory in your PATH (e.g., /usr/local/bin)
+ln -s "$(pwd)/git-worktree-automation.sh" /usr/local/bin/git-worktree-automation.sh
+
+# Option B: Link to your config directory
+mkdir -p ~/.config
+ln -s "$(pwd)/git-worktree-automation.sh" ~/.config/git-worktree-automation.sh
+```
+
+2. Add this line to your `~/.zshrc`:
+
+```bash
+# If you used Option A (PATH directory)
+source /usr/local/bin/git-worktree-automation.sh
+
+# If you used Option B (config directory)
+source ~/.config/git-worktree-automation.sh
+```
+
+3. Reload your shell:
+
+```bash
+source ~/.zshrc
+```
+
+**Benefits of the symlink method:**
+- ✅ Easy updates - just `git pull` in this repository
+- ✅ Version control - track changes to your automation script
+- ✅ Portability - works across multiple machines with the same setup
+- ✅ Clean separation - keeps your `.zshrc` minimal
+
 ## Usage
 
 ### Basic Commands
