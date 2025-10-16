@@ -273,17 +273,7 @@ wt-help() {
 if [[ "${WT_SHOW_WELCOME}" == "true" ]]; then
     echo "📋 Git Worktree Automation Script Loaded!"
     echo ""
-    echo "Available commands:"
-    echo "  wt <branch-name>    - Create and switch to a new worktree"
-    echo "  wt-list             - List all worktrees"
-    echo "  wt-remove <branch>  - Remove a worktree"
-    echo "  wt-help             - Show help message"
-    echo ""
-    echo "Example usage:"
-    echo "  wt feature-1        - Creates myproject_worktrees/feature-1"
-    echo "  wt bugfix/issue-123 - Creates myproject_worktrees/bugfix/issue-123"
-    echo "  wt-list             - Shows all current worktrees"
-    echo "  wt-remove feature-1 - Removes the feature-1 worktree"
+    wt-help
     echo ""
     echo "💡 Use 'wt-help' anytime to see this information again"
     echo "💡 To hide this message, unset WT_SHOW_WELCOME or set it to false"
