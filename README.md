@@ -101,9 +101,19 @@ source ~/.zshrc
 
 ```bash
 # In project "myproject"
+
+# New branches (created from current HEAD)
 wp feature-1           # Creates myproject_worktrees/feature-1
 wp bugfix/issue-123    # Creates myproject_worktrees/bugfix/issue-123
 wp hotfix-2024         # Creates myproject_worktrees/hotfix-2024
+
+# Remote branches (after git fetch)
+wp feature/user-auth   # Creates from origin/feature/user-auth
+wp release/v2.1.0      # Creates from origin/release/v2.1.0
+
+# Existing local branches
+wp main                # Creates from local main branch
+wp develop             # Creates from local develop branch
 ```
 
 #### Managing Worktrees
@@ -125,6 +135,171 @@ wplist
 
 # Remove a worktree
 wpremove feature-1
+```
+
+## Working with Remote Branches
+
+The script has **built-in support for remote branches**! This is perfect for team collaboration where you need to work on branches created by colleagues or switch between different remote branches quickly.
+
+### How Remote Branch Detection Works
+
+The script automatically detects and handles remote branches in this priority order:
+
+1. **Local branch** (if exists) - `refs/heads/branch-name`
+2. **Remote branch** (if exists) - `refs/remotes/origin/branch-name`
+3. **New branch** (if neither exists) - Creates from current HEAD
+
+### Remote Branch Examples
+
+#### Working with Colleague's Branches
+
+```bash
+# Colleague pushed "feature/user-authentication" to origin
+git fetch                                    # Get latest remote refs
+wp feature/user-authentication              # Creates worktree tracking origin/feature/user-authentication
+
+# Script output:
+# ✅ Found existing remote branch: origin/feature/user-authentication
+# ⚙️ Creating worktree at: myproject_worktrees/feature/user-authentication
+# ✅ Worktree created successfully from existing branch!
+# 🎉 Worktree setup complete!
+```
+
+#### Common Team Workflow Patterns
+
+```bash
+# Work on hotfixes
+git fetch
+wp hotfix/critical-security-fix             # Creates from origin/hotfix/critical-security-fix
+
+# Review pull requests
+git fetch
+wp feature/new-dashboard                     # Creates from origin/feature/new-dashboard
+
+# Work on release branches
+git fetch
+wp release/v2.1.0                           # Creates from origin/release/v2.1.0
+
+# Handle complex branch names
+git fetch
+wp bugfix/issue-1234-payment-gateway        # Creates from origin/bugfix/issue-1234-payment-gateway
+```
+
+### Prerequisites for Remote Branches
+
+**Important**: Remote branches must be visible locally before the script can use them.
+
+```bash
+# Always fetch first to see latest remote branches
+git fetch
+
+# Or fetch from specific remote
+git fetch origin
+
+# Verify remote branch exists
+git branch -r | grep feature-name
+
+# Then use the script
+wp feature-name
+```
+
+### What Happens Behind the Scenes
+
+When you run `wp remote-branch-name`:
+
+1. **Detection Phase**:
+   ```bash
+   # Script checks in order:
+   git show-ref --verify --quiet "refs/heads/remote-branch-name"      # Local first
+   git show-ref --verify --quiet "refs/remotes/origin/remote-branch-name"  # Then remote
+   ```
+
+2. **Worktree Creation**:
+   ```bash
+   # For remote branches, git automatically:
+   git worktree add myproject_worktrees/remote-branch-name remote-branch-name
+   # This creates a local tracking branch automatically
+   ```
+
+3. **Automatic Tracking Setup**:
+   - Creates local `remote-branch-name` branch
+   - Sets up tracking to `origin/remote-branch-name`
+   - Ready for commits and pushes
+
+### Branch Priority Examples
+
+Understanding which branch the script will use:
+
+```bash
+# Scenario 1: Only remote branch exists
+git branch -r | grep feature-x              # Shows: origin/feature-x
+wp feature-x                                # ✅ Uses origin/feature-x
+
+# Scenario 2: Both local and remote exist
+git branch | grep feature-y                 # Shows: feature-y
+git branch -r | grep feature-y              # Shows: origin/feature-y
+wp feature-y                                # ✅ Uses local feature-y (priority)
+
+# Scenario 3: Neither exists
+wp feature-z                                # ✅ Creates new branch from HEAD
+```
+
+### Team Collaboration Tips
+
+**Daily Workflow**:
+```bash
+# Morning routine - sync with team
+git fetch
+wp feature/current-task                     # Work on your feature
+
+# Switch to review colleague's work
+git fetch
+wp feature/colleague-task                   # Quick switch to review
+
+# Switch back to your work
+wp feature/current-task                     # Instantly back to your branch
+```
+
+**Multiple Remote Scenarios**:
+```bash
+# The script currently checks 'origin' remote
+# For other remotes, fetch them first:
+git fetch upstream
+git fetch fork
+
+# Then create local branch manually if needed:
+git checkout -b upstream-feature upstream/feature-name
+wp upstream-feature                         # Now script can use local branch
+```
+
+### Troubleshooting Remote Branches
+
+**Branch not found**:
+```bash
+# ❌ Error: Branch 'feature-x' not found
+git fetch                                   # Fetch latest remotes
+git branch -r | grep feature               # Verify branch name
+wp feature-x                               # Try again
+```
+
+**Multiple remotes conflict**:
+```bash
+# If you have branches with same name on different remotes
+git branch -r | grep feature-name          # See all remote versions
+
+# Create specific local branches:
+git checkout -b feature-origin origin/feature-name
+git checkout -b feature-upstream upstream/feature-name
+
+# Then use script:
+wp feature-origin                          # Uses your local branch
+```
+
+**Outdated remote references**:
+```bash
+# If remote branch was deleted but you still see it
+git remote prune origin                    # Clean up stale references
+git fetch                                  # Get fresh remote refs
 ```
 
 ## How It Works
