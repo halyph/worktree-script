@@ -121,7 +121,7 @@ wt() {
     echo "🎉 Worktree setup complete!"
     echo "📍 Current location: $(pwd)"
     echo "🌿 Current branch: $(git branch --show-current)"
-    echo "💡 Use 'wt-list' to see all worktrees or 'wt-remove $branch_name' to remove this one"
+    echo "💡 Use 'wt-list' to see all worktrees, 'wt-remove $branch_name' to remove this one, or 'wt-help' for help"
 }
 
 # -----------------------------------------------------------------------------
@@ -242,19 +242,39 @@ wt-remove() {
 }
 
 # -----------------------------------------------------------------------------
-# Installation Instructions
+# Helper Function: wt-help
 # -----------------------------------------------------------------------------
-echo "📋 Git Worktree Automation Script Loaded!"
-echo ""
-echo "Available commands:"
-echo "  wt <branch-name>    - Create and switch to a new worktree"
-echo "  wt-list             - List all worktrees"
-echo "  wt-remove <branch>  - Remove a worktree"
-echo ""
-echo "Example usage:"
-echo "  wt feature-1        - Creates myproject_worktrees/feature-1"
-echo "  wt bugfix/issue-123 - Creates myproject_worktrees/bugfix/issue-123"
-echo "  wt-list             - Shows all current worktrees"
-echo "  wt-remove feature-1 - Removes the feature-1 worktree"
-echo ""
-echo "💡 To add to your shell permanently, add this script to your ~/.zshrc file"
+# Displays help information for the git worktree automation commands
+# -----------------------------------------------------------------------------
+wt-help() {
+    echo "📋 Git Worktree Automation Script"
+    echo ""
+    echo "Available commands:"
+    echo "  wt <branch-name>    - Create and switch to a new worktree"
+    echo "  wt-list             - List all worktrees"
+    echo "  wt-remove <branch>  - Remove a worktree"
+    echo "  wt-help             - Show this help message"
+    echo ""
+    echo "Example usage:"
+    echo "  wt feature-1        - Creates myproject_worktrees/feature-1"
+    echo "  wt bugfix/issue-123 - Creates myproject_worktrees/bugfix/issue-123"
+    echo "  wt-list             - Shows all current worktrees"
+    echo "  wt-remove feature-1 - Removes the feature-1 worktree"
+    echo ""
+    echo "💡 To add to your shell permanently, add this script to your ~/.zshrc file"
+}
+
+# -----------------------------------------------------------------------------
+# Optional Welcome Message
+# -----------------------------------------------------------------------------
+# Display welcome message only if WT_SHOW_WELCOME is set to "true"
+# Set WT_SHOW_WELCOME=true in your shell profile to enable the welcome message
+# -----------------------------------------------------------------------------
+if [[ "${WT_SHOW_WELCOME}" == "true" ]]; then
+    echo "📋 Git Worktree Automation Script Loaded!"
+    echo ""
+    wt-help
+    echo ""
+    echo "💡 Use 'wt-help' anytime to see this information again"
+    echo "💡 To hide this message, unset WT_SHOW_WELCOME or set it to false"
+fi
