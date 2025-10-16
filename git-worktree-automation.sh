@@ -141,19 +141,39 @@ wt-list() {
     echo ""
 
     # Use git worktree list with nice formatting
-    git worktree list --porcelain | while IFS= read -r line; do
+    # Process the output to group each worktree's info together
+    local output=$(git worktree list --porcelain)
+    local worktree_path=""
+    local branch_name=""
+    local commit_hash=""
+
+    while IFS= read -r line; do
         if [[ $line == worktree* ]]; then
+            # If we have previous worktree data, output it first
+            if [[ -n "$worktree_path" ]]; then
+                echo "📁 $(basename "$worktree_path"): $worktree_path"
+                echo "   🌿 Branch: $branch_name"
+                echo "   📝 Commit: ${commit_hash:0:8}"
+                echo ""
+            fi
+            # Start new worktree
             worktree_path=$(echo "$line" | cut -d' ' -f2-)
-            echo "📁 $(basename "$worktree_path"): $worktree_path"
+            branch_name=""
+            commit_hash=""
         elif [[ $line == branch* ]]; then
             branch_name=$(echo "$line" | cut -d' ' -f2- | sed 's|refs/heads/||')
-            echo "   🌿 Branch: $branch_name"
         elif [[ $line == HEAD* ]]; then
             commit_hash=$(echo "$line" | cut -d' ' -f2)
-            echo "   📝 Commit: ${commit_hash:0:8}"
-            echo ""
         fi
-    done
+    done <<< "$output"
+
+    # Output the last worktree
+    if [[ -n "$worktree_path" ]]; then
+        echo "📁 $(basename "$worktree_path"): $worktree_path"
+        echo "   🌿 Branch: $branch_name"
+        echo "   📝 Commit: ${commit_hash:0:8}"
+        echo ""
+    fi
 }
 
 # -----------------------------------------------------------------------------
