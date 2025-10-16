@@ -410,4 +410,4 @@ git worktree remove --force /path/to/worktree
 
 ## License
 
-This script is provided as-is for educational and productivity purposes. Feel free to modify and distribute.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
