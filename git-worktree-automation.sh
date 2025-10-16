@@ -4,14 +4,14 @@
 # Git Worktree Automation Script
 # =============================================================================
 # This script provides automated git worktree creation and management
-# Add this to your ~/.zshrc file to enable the wp, wplist, and wpremove commands
+# Add this to your ~/.zshrc file to enable the wt, wt-list, and wt-remove commands
 #
 # Author: Claude Code Assistant
-# Usage: wp <branch-name>
+# Usage: wt <branch-name>
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Main Function: wp (Worktree Plus)
+# Main Function: wt (Worktree)
 # -----------------------------------------------------------------------------
 # Creates a git worktree in a sibling directory named "{project}_worktrees"
 #
@@ -21,15 +21,15 @@
 # 3. Checks if the branch exists locally, remotely, or needs to be created
 # 4. Creates the worktree and navigates to it
 #
-# Example: If you're in "myproject" and run "wp feature-1"
+# Example: If you're in "myproject" and run "wt feature-1"
 # Result: Creates "myproject_worktrees/feature-1" and cd's into it
 # -----------------------------------------------------------------------------
-wp() {
+wt() {
     # Validate input parameters
     if [[ -z "$1" ]]; then
         echo "❌ Error: Branch name is required"
-        echo "Usage: wp <branch-name>"
-        echo "Example: wp feature-1"
+        echo "Usage: wt <branch-name>"
+        echo "Example: wt feature-1"
         return 1
     fi
 
@@ -121,16 +121,16 @@ wp() {
     echo "🎉 Worktree setup complete!"
     echo "📍 Current location: $(pwd)"
     echo "🌿 Current branch: $(git branch --show-current)"
-    echo "💡 Use 'wplist' to see all worktrees or 'wpremove $branch_name' to remove this one"
+    echo "💡 Use 'wt-list' to see all worktrees or 'wt-remove $branch_name' to remove this one"
 }
 
 # -----------------------------------------------------------------------------
-# Helper Function: wplist
+# Helper Function: wt-list
 # -----------------------------------------------------------------------------
 # Lists all git worktrees for the current repository
 # Shows the path, branch, and commit for each worktree
 # -----------------------------------------------------------------------------
-wplist() {
+wt-list() {
     # Verify we're in a git repository
     if ! git rev-parse --git-dir >/dev/null 2>&1; then
         echo "❌ Error: Not in a git repository"
@@ -157,20 +157,20 @@ wplist() {
 }
 
 # -----------------------------------------------------------------------------
-# Helper Function: wpremove
+# Helper Function: wt-remove
 # -----------------------------------------------------------------------------
 # Removes a git worktree by branch name
 # Safely removes both the worktree and cleans up git references
 #
-# Usage: wpremove <branch-name>
-# Example: wpremove feature-1
+# Usage: wt-remove <branch-name>
+# Example: wt-remove feature-1
 # -----------------------------------------------------------------------------
-wpremove() {
+wt-remove() {
     # Validate input parameters
     if [[ -z "$1" ]]; then
         echo "❌ Error: Branch name is required"
-        echo "Usage: wpremove <branch-name>"
-        echo "Example: wpremove feature-1"
+        echo "Usage: wt-remove <branch-name>"
+        echo "Example: wt-remove feature-1"
         return 1
     fi
 
@@ -193,7 +193,7 @@ wpremove() {
     # Check if the worktree directory exists
     if [[ ! -d "$worktree_path" ]]; then
         echo "❌ Worktree not found: $worktree_path"
-        echo "💡 Use 'wplist' to see available worktrees"
+        echo "💡 Use 'wt-list' to see available worktrees"
         return 1
     fi
 
@@ -227,14 +227,14 @@ wpremove() {
 echo "📋 Git Worktree Automation Script Loaded!"
 echo ""
 echo "Available commands:"
-echo "  wp <branch-name>    - Create and switch to a new worktree"
-echo "  wplist              - List all worktrees"
-echo "  wpremove <branch>   - Remove a worktree"
+echo "  wt <branch-name>    - Create and switch to a new worktree"
+echo "  wt-list             - List all worktrees"
+echo "  wt-remove <branch>  - Remove a worktree"
 echo ""
 echo "Example usage:"
-echo "  wp feature-1        - Creates myproject_worktrees/feature-1"
-echo "  wp bugfix/issue-123 - Creates myproject_worktrees/bugfix/issue-123"
-echo "  wplist              - Shows all current worktrees"
-echo "  wpremove feature-1  - Removes the feature-1 worktree"
+echo "  wt feature-1        - Creates myproject_worktrees/feature-1"
+echo "  wt bugfix/issue-123 - Creates myproject_worktrees/bugfix/issue-123"
+echo "  wt-list             - Shows all current worktrees"
+echo "  wt-remove feature-1 - Removes the feature-1 worktree"
 echo ""
 echo "💡 To add to your shell permanently, add this script to your ~/.zshrc file"

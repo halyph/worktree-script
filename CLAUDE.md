@@ -21,9 +21,9 @@ This is a **Git Worktree Automation Script** that provides shell functions for c
 source git-worktree-automation.sh
 
 # Test the main functions
-wp test-branch          # Create a test worktree
-wplist                  # Verify worktree creation
-wpremove test-branch    # Clean up test worktree
+wt test-branch          # Create a test worktree
+wt-list                 # Verify worktree creation
+wt-remove test-branch   # Clean up test worktree
 ```
 
 ### Installation Testing
@@ -39,9 +39,9 @@ ln -s "$(pwd)/git-worktree-automation.sh" ~/.config/  # Method 3
 ### Single-File Design
 The entire functionality is contained in `git-worktree-automation.sh` with three main functions:
 
-- **`wp(branch-name)`**: Core worktree creation and navigation
-- **`wplist()`**: Lists all worktrees with details
-- **`wpremove(branch-name)`**: Safe worktree removal and cleanup
+- **`wt(branch-name)`**: Core worktree creation and navigation
+- **`wt-list()`**: Lists all worktrees with details
+- **`wt-remove(branch-name)`**: Safe worktree removal and cleanup
 
 ### Directory Structure Pattern
 ```

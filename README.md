@@ -4,12 +4,12 @@ An automated git worktree creation and management system that creates worktrees 
 
 ## Features
 
-- 🚀 **One-command worktree creation**: `wp feature-1` creates and switches to the worktree
+- 🚀 **One-command worktree creation**: `wt feature-1` creates and switches to the worktree
 - 📁 **Organized structure**: Worktrees stored in `{project}_worktrees/` directory
 - 🌿 **Smart branch handling**: Works with existing local/remote branches or creates new ones
 - ♻️ **Reuse existing worktrees**: Navigates to existing worktrees instead of failing
 - 🛡️ **Comprehensive error handling**: Clear messages for all edge cases
-- 🧹 **Easy cleanup**: Remove worktrees with `wpremove` command
+- 🧹 **Easy cleanup**: Remove worktrees with `wt-remove` command
 
 ## Installation
 
@@ -91,9 +91,9 @@ source ~/.zshrc
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `wp <branch-name>` | Create/switch to worktree | `wp feature-1` |
-| `wplist` | List all worktrees | `wplist` |
-| `wpremove <branch>` | Remove a worktree | `wpremove feature-1` |
+| `wt <branch-name>` | Create/switch to worktree | `wt feature-1` |
+| `wt-list` | List all worktrees | `wt-list` |
+| `wt-remove <branch>` | Remove a worktree | `wt-remove feature-1` |
 
 ### Examples
 
@@ -103,24 +103,24 @@ source ~/.zshrc
 # In project "myproject"
 
 # New branches (created from current HEAD)
-wp feature-1           # Creates myproject_worktrees/feature-1
-wp bugfix/issue-123    # Creates myproject_worktrees/bugfix/issue-123
-wp hotfix-2024         # Creates myproject_worktrees/hotfix-2024
+wt feature-1           # Creates myproject_worktrees/feature-1
+wt bugfix/issue-123    # Creates myproject_worktrees/bugfix/issue-123
+wt hotfix-2024         # Creates myproject_worktrees/hotfix-2024
 
 # Remote branches (after git fetch)
-wp feature/user-auth   # Creates from origin/feature/user-auth
-wp release/v2.1.0      # Creates from origin/release/v2.1.0
+wt feature/user-auth   # Creates from origin/feature/user-auth
+wt release/v2.1.0      # Creates from origin/release/v2.1.0
 
 # Existing local branches
-wp main                # Creates from local main branch
-wp develop             # Creates from local develop branch
+wt main                # Creates from local main branch
+wt develop             # Creates from local develop branch
 ```
 
 #### Managing Worktrees
 
 ```bash
 # List all worktrees
-wplist
+wt-list
 
 # Output:
 # 📋 Git worktrees for myproject:
@@ -134,7 +134,7 @@ wplist
 #    📝 Commit: e5f6g7h8
 
 # Remove a worktree
-wpremove feature-1
+wt-remove feature-1
 ```
 
 ## Working with Remote Branches
@@ -156,7 +156,7 @@ The script automatically detects and handles remote branches in this priority or
 ```bash
 # Colleague pushed "feature/user-authentication" to origin
 git fetch                                    # Get latest remote refs
-wp feature/user-authentication              # Creates worktree tracking origin/feature/user-authentication
+wt feature/user-authentication              # Creates worktree tracking origin/feature/user-authentication
 
 # Script output:
 # ✅ Found existing remote branch: origin/feature/user-authentication
@@ -170,19 +170,19 @@ wp feature/user-authentication              # Creates worktree tracking origin/f
 ```bash
 # Work on hotfixes
 git fetch
-wp hotfix/critical-security-fix             # Creates from origin/hotfix/critical-security-fix
+wt hotfix/critical-security-fix             # Creates from origin/hotfix/critical-security-fix
 
 # Review pull requests
 git fetch
-wp feature/new-dashboard                     # Creates from origin/feature/new-dashboard
+wt feature/new-dashboard                     # Creates from origin/feature/new-dashboard
 
 # Work on release branches
 git fetch
-wp release/v2.1.0                           # Creates from origin/release/v2.1.0
+wt release/v2.1.0                           # Creates from origin/release/v2.1.0
 
 # Handle complex branch names
 git fetch
-wp bugfix/issue-1234-payment-gateway        # Creates from origin/bugfix/issue-1234-payment-gateway
+wt bugfix/issue-1234-payment-gateway        # Creates from origin/bugfix/issue-1234-payment-gateway
 ```
 
 ### Prerequisites for Remote Branches
@@ -200,12 +200,12 @@ git fetch origin
 git branch -r | grep feature-name
 
 # Then use the script
-wp feature-name
+wt feature-name
 ```
 
 ### What Happens Behind the Scenes
 
-When you run `wp remote-branch-name`:
+When you run `wt remote-branch-name`:
 
 1. **Detection Phase**:
    ```bash
@@ -233,15 +233,15 @@ Understanding which branch the script will use:
 ```bash
 # Scenario 1: Only remote branch exists
 git branch -r | grep feature-x              # Shows: origin/feature-x
-wp feature-x                                # ✅ Uses origin/feature-x
+wt feature-x                                # ✅ Uses origin/feature-x
 
 # Scenario 2: Both local and remote exist
 git branch | grep feature-y                 # Shows: feature-y
 git branch -r | grep feature-y              # Shows: origin/feature-y
-wp feature-y                                # ✅ Uses local feature-y (priority)
+wt feature-y                                # ✅ Uses local feature-y (priority)
 
 # Scenario 3: Neither exists
-wp feature-z                                # ✅ Creates new branch from HEAD
+wt feature-z                                # ✅ Creates new branch from HEAD
 ```
 
 ### Team Collaboration Tips
@@ -250,14 +250,14 @@ wp feature-z                                # ✅ Creates new branch from HEAD
 ```bash
 # Morning routine - sync with team
 git fetch
-wp feature/current-task                     # Work on your feature
+wt feature/current-task                     # Work on your feature
 
 # Switch to review colleague's work
 git fetch
-wp feature/colleague-task                   # Quick switch to review
+wt feature/colleague-task                   # Quick switch to review
 
 # Switch back to your work
-wp feature/current-task                     # Instantly back to your branch
+wt feature/current-task                     # Instantly back to your branch
 ```
 
 **Multiple Remote Scenarios**:
@@ -269,7 +269,7 @@ git fetch fork
 
 # Then create local branch manually if needed:
 git checkout -b upstream-feature upstream/feature-name
-wp upstream-feature                         # Now script can use local branch
+wt upstream-feature                         # Now script can use local branch
 ```
 
 ### Troubleshooting Remote Branches
@@ -279,7 +279,7 @@ wp upstream-feature                         # Now script can use local branch
 # ❌ Error: Branch 'feature-x' not found
 git fetch                                   # Fetch latest remotes
 git branch -r | grep feature               # Verify branch name
-wp feature-x                               # Try again
+wt feature-x                               # Try again
 ```
 
 **Multiple remotes conflict**:
@@ -292,7 +292,7 @@ git checkout -b feature-origin origin/feature-name
 git checkout -b feature-upstream upstream/feature-name
 
 # Then use script:
-wp feature-origin                          # Uses your local branch
+wt feature-origin                          # Uses your local branch
 ```
 
 **Outdated remote references**:
@@ -306,7 +306,7 @@ git fetch                                  # Get fresh remote refs
 
 ### Directory Structure
 
-When you run `wp feature-1` in a project called "myproject":
+When you run `wt feature-1` in a project called "myproject":
 
 ```
 parent-directory/
@@ -339,9 +339,9 @@ The script intelligently handles different branch scenarios:
 
 ### Main Functions
 
-- **`wp()`**: Core worktree creation function
-- **`wplist()`**: Lists all worktrees with details
-- **`wpremove()`**: Safely removes worktrees
+- **`wt()`**: Core worktree creation function
+- **`wt-list()`**: Lists all worktrees with details
+- **`wt-remove()`**: Safely removes worktrees
 
 ### Key Features Explained
 
@@ -380,11 +380,11 @@ git worktree add -b "$branch_name" "$worktree_path"
 
 **Error: "Failed to create worktree"**
 - The branch might already be checked out in another worktree
-- Use `wplist` to see existing worktrees
-- Try `wpremove <branch>` if the worktree exists but is problematic
+- Use `wt-list` to see existing worktrees
+- Try `wt-remove <branch>` if the worktree exists but is problematic
 
 **Error: "Worktree not found"**
-- Use `wplist` to see available worktrees
+- Use `wt-list` to see available worktrees
 - Check if you're in the correct git repository
 
 ### Manual Cleanup
